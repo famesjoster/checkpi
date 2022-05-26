@@ -5,6 +5,8 @@ clear
 echo "Checking Pi..."
 ssh -o LogLevel=QUIET pi -t '/bin/bash -c "/usr/bin/dmesg -T | tail -n 3";
         echo "===========================================================================";
+        tail -n1 /var/log/pinglog.txt
+        echo "===========================================================================";
         /usr/sbin/zpool status -x;
         echo "===========================================================================";
         sudo apt update 1>&- 2>&-;
