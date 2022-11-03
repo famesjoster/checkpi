@@ -8,13 +8,15 @@ ssh -o LogLevel=QUIET pi -t '/bin/bash -c "/usr/bin/dmesg -T | tail -n 3";
         tail -n1 /var/log/pinglog.txt
         echo "===========================================================================";
         /usr/sbin/zpool status -x;
+        (/usr/sbin/zpool status | grep -q "state: ONLINE") || echo "SCRUBBING?";
         echo "===========================================================================";
         sudo apt update 1>&- 2>&-;
         apt list --upgradable;
-#       echo "===========================================================================";
-#       cd /home/pi/chia-blockchain
-#       git fetch --quiet
-#       git status -uno | grep behind
+        echo "===========================================================================";
+        echo "Checking chia git repo..."
+        cd /home/pi/chia-blockchain
+        /usr/bin/git fetch --quiet
+        (/usr/bin/git status -uno | grep -q "up to date") || echo "CHIA NEEDS UPDATING";
         echo "===========================================================================";
         free -m | egrep "Mem|Swap";
         echo "===========================================================================";
@@ -29,7 +31,6 @@ ssh -o LogLevel=QUIET pi -t '/bin/bash -c "/usr/bin/dmesg -T | tail -n 3";
         echo "===========================================================================";
         grep "[1-9] plots were eligible" ~/.chia/mainnet/log/debug.log | tail -n 3;
         echo "===========================================================================";
-        echo "Last eligible plot: $(grep "[1-9] plots were eligible" ~/.chia/mainnet/log/debug.log | tail -n 1 | cut -d" " -f1)"
+        echo "Last proof attempt: $(grep "[0-9] plots were eligible" ~/.chia/mainnet/log/debug.log | tail -n 1 | cut -d" " -f1)"
         echo "TIME:               $(date +%Y-%m-%dT%T.%3N)"'
-
 exit
