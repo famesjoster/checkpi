@@ -7,11 +7,14 @@ ssh -o LogLevel=QUIET pi -t '/bin/bash -c "/usr/bin/dmesg -T | tail -n 3";
         echo "===========================================================================";
         tail -n1 /var/log/pinglog.txt
         echo "===========================================================================";
+        (/usr/sbin/zpool status | grep -q "scrub in progress") && echo "SCRUBBING!!! PERFORMANCE WILL BE DEGRADED!!!";
         /usr/sbin/zpool status -x;
-        (/usr/sbin/zpool status | grep -q "state: ONLINE") || echo "SCRUBBING?";
         echo "===========================================================================";
         sudo apt update 1>&- 2>&-;
         apt list --upgradable;
+        echo "===========================================================================";
+        echo "Checking docker..."
+        sudo docker ps -q | grep -q ".*" && echo "docker is RUNNING"
         echo "===========================================================================";
         echo "Checking chia git repo..."
         cd /home/pi/chia-blockchain
